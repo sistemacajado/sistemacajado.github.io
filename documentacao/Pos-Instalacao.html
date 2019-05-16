@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+	<title>Instalação</title>
+	<meta charset="utf-8">
+	<link rel="stylesheet" type="text/css" href="../css/estilo.css"/>
+</head>
+<body>
+	<div id="logo">
+		<h1>Pós Instalação</h1>
+	</div>
+<div id='main'>
+<p>
+Ok, você instalou o seu Cajado e iniciou a máquina e irá cair na tela de login...
+O primeiro passo é claro logar como root para começar a brincadeira.
+</p>
+
+<h2>Criando conta de usuário</h2>
+<p>
+Se você quer ter um ambiente convencional para usar no dia a dia você ira necessitar criar uma conta de usuário comum.
+Não é seguro utilizar o root para tarefas básicas do dia dia! A não se que você realmente saiba o que está fazendo.
+</p>
+
+<p>
+Para criar uma conta utilizaremos o comando <b>adduser</b>. Ele é um comando interativo e te fará um monte de perguntas, bastanto responder.
+</p>
+
+<pre>
+<b>adduser</b> NomeDoUsuário
+</pre>
+
+
+<h2>Ajustando Teclado para ABNT2 e Linguagem do Sistema para PT-BR</h2>
+<p>
+Se você utiliza o padrão ABNT2 e gosta do sistema em Português do Brasil siga este passo a passo, se não pode pular.
+</p>
+
+<p>
+Existem duas categorias de reconhecimento da linguagem do teclado.<br>
+A primeira forma consiste em trocar o padrão via TTY, provavelmente você está neste ambiente agora.<br>
+A segunda forma é trocar o valor do teclado para interface gráfica. Recomendo trocar as duas :)
+</p>
+
+<p>
+Para a primeira forma via TTY, vamos criar um serviço de inicialização em /etc/rc.d/rc.keyboard.
+Você pode abrir seu editor de texto favorito OU fazer via linha de comando. Para nosso mêtodo utilizaremos a linha de comando com o comando cat fazendo um <b>heredocument</b>.
+</p>
+
+<pre>
+<b>cat >> /etc/rc./rc.keyboard << EOF</b>
+#!/bin/sh
+# Teclado para ABNT2
+
+if [ -x "/usr/bin/loadkeys" ]; then
+    /usr/bin/loadkeys br-abnt2.map
+fi
+
+<b>EOF</b>
+</pre>
+
+<p>
+Feito isso dê permissão de execução para inicialização do serviço no boot do Cajado!
+</p>
+
+<pre>
+<b>chmod</b> +x /etc/rc.d/rc.keyboard
+</pre>
+
+<p>
+O primeiro passo está feito, porém quando você inicializar a interface gráfica o teclado <b>não</b> vai se ajustar para o ABNT2. O que fizemos foi para o TTY se ajustar.
+Vamos agora ajustar para interface gráfica.
+</p>
+
+<p>
+Existe um arquivo chamado <b>90-keyboard-layout.conf</b> que está localizado em <b>/usr/share/X11/xorg.conf.d/</b>. Vamos fazer uma cópia deste arquivo para o diretório <b>/etc/X11/xorg.conf.d/</b> e logo em seguida abrimos ele com o nosso editor favorito.
+</p>
+
+<pre>
+# Copiando Arquivo
+
+<b>cp</b> /usr/share/X11/xorg.conf.d/90-keyboard-layout.conf \
+/etc/X11/xorg.conf.d/
+
+# Abrir Arquivo
+vi /etc/X11/xorg.conf.d/90-keyboard-layout.conf
+</pre>
+
+<p>
+Ao abrir o arquivo procure a linha: <b>Option "XkbLayout" "us"</b> e substitua "us" por "br" ficando:
+</p>
+
+<pre>
+Option "XkbLayout" "br"
+</pre>
+
+
+<h2>Ajustando Internet</h2>
+
+
+
+<h2>Criando conta de usuário</h2>
+
+<h2>Criando conta de usuário</h2>
+
+
+</div>
+</body>
+</html>

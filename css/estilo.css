@@ -1,0 +1,12 @@
+
+body{margin: 0 auto;}
+#logo{text-align: center; background-color: black; padding: 1%;}
+h1{color: white; font-size: 2.5em}
+h2{color: #0000ff;}
+#main{margin: 1em auto;max-width: 40em; margin-top: 5%; font-size: 1.2em;}
+footer{background-color: black; color: white; padding: 1%; text-align: center; font-size: 1.0em;}
+pre{background-color: #d1d1d1; padding: 2%; border-style: dotted;}
+a:link{font-size: 1.2em; color: blue;}
+a:visited{color: blue;}
+a:hover{background-color: black; color: white; padding: 0.5%;}
+li{padding: 0.3%;}

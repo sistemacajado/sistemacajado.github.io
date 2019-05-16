@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+	<title>Instalação</title>
+	<meta charset="utf-8">
+	<link rel="stylesheet" type="text/css" href="../css/estilo.css"/>
+</head>
+<body>
+	<div id="logo">
+		<h1>Manual de Instalação</h1>
+	</div>
+<div id='main'>
+
+<p>
+Após ter inicializado a LiveCD do Cajado, você terá que seguir uma série de passos para atingir o objetivo final.<br>
+Este manual é uma receita básica de como você pode atingir este objetivo, você é o administrador e encorajamos você a mudar qualquer passo.
+</p>
+
+<p>
+<b>NOTA!</b><br>
+Para este manual vamos usar o dispositivo /dev/sda, mude para sua realidade.
+</p>
+
+<h2>Particionar Disco(s)</h2>
+<p>
+Este é o seu primeiro passo! Você precisa particionar seu disco.<br>
+A ferramenta mais utilizada é o cfdisk.
+</p>
+
+<pre>
+cfdisk /dev/sda
+</pre>
+
+<h2>Formatar Partição/Partições</h2>
+<p>
+Para formatar a sua(s) Partição/Partições utilize o comando mkfs.
+Por padrão ele tem um suporte bem amplo, sendo eles:<br>
+
+<pre>
+mkfs.bfs       mkfs.ext2      mkfs.reiserfs
+mkfs.btrfs     mkfs.ext3      mkfs.xfs
+mkfs.ext4      mkfs.jfs      
+</pre>
+
+Neste passo utilizaremos o ext4, que é um formato "bastante" utilizado, para isso execute:
+</p>
+<pre>
+<b>mkfs.ext4</b> /dev/Sua(s)Particão
+
+<b>Exemplo para sda1</b>
+
+<b>mkfs.ext4</b> /dev/sda1
+</pre>
+
+
+
+<h2>Criar e Ligar Swap</h2>
+<p>
+Se caso você criou uma partição dedicada ao dispositivo swap, chegou a hora de criar a swap área e ligar.
+</p>
+<pre>
+<b>mkswap</b> /dev/PartiçãoSwap
+
+# Supondo que a partição dedicada para swap seja a sda4
+
+<b>mkswap</b> /dev/sda4
+
+# E vamos ligar a swap:
+
+<b>swapon /dev/sda4</b>
+</pre>
+
+
+
+<h2>Montar partições</h2>
+<p>
+Monte a partição raiz / em /mnt
+</p>
+
+<pre>
+<b>mount -t auto</b> /dev/sda1 /mnt
+</pre>
+
+<h2>Editar Menu de categorias e Instalar</h2>
+<p>
+Existe um arquivo localizado na LiveCD chamado <b><u>categorias.conf</u></b>. Este arquivo de configuração é utilizado no programa <b>install.sh</b> que você executará logo após a modificação deste arquivo.
+</p>
+
+<p>
+Ao abrir o arquivo você irá se deparar com as categorias básicas do Cajado; Abras este arquivo com o editor vi, em seguida descomente as categorias que você deseja fazer instalação.
+Para descomentar, basta apenas retirar a tralha/jogo da velha ou hastag na frente de cada categoria.
+</p>
+
+<pre>
+base                 Base do Sistema
+bibliotecas          Bibliotecas de programas
+cli-apps             Aplicativos que funcionam via CLI
+desenvolvimento      Compiladores, linguagens de programacao etc...
+internet             Aplicativos para rede e serviços de rede
+<b>#</b>xorg                Sistema X
+<b>#</b>i3-gaps             Interface Gráfica I3-gaps
+</pre>
+
+<p>
+Por padrão as categorias habilitadas são: <b>base, bibliotecas, cli-apps,
+desenvolvimento e internet.</b>
+Sinta-se livre para marcar e desmarcar as categorias de sua preferência! Neste exemplo desmarcamos o xorg e i3-gaps para ter um ambiente de trabalho.
+</p>
+
+<pre>
+base                 Base do Sistema
+bibliotecas          Bibliotecas de programas
+cli-apps             Aplicativos que funcionam via CLI
+desenvolvimento      Compiladores, linguagens de programacao etc...
+internet             Aplicativos para rede e serviços de rede
+xorg                 Sistema X
+i3-gaps              Interface Gráfica I3-gaps
+</pre>
+
+<p>
+Após ter feito a mudança salve e saia do arquivo. Para aplicar a mudança e sair no <b>vi</b> pressione <br>ESC + :wq
+</p>
+
+<p>
+Agora vamos começar a parte da instalação das categorias em seu HD. Para isso execute o comando: <b>install.sh</b>.<br>
+Esta operação poderá demorar até 10 minutos... Dependendo do sistema.
+</p>
+
+<h2>Fazer Chroot</h2>
+<p>
+Após ter feita toda instalação da categoria em seu HD, chegou a hora de entrar no seu novo sistema para continuar a instalação!
+</p>
+
+<p>
+Para isto vamos usar o comando chroot, que nos permiti fazer essa mágica.
+</p>
+
+<pre>
+chroot /mnt
+</pre>
+
+<p>
+Note que o prompt PS1 não foi alterado, para saber se realmente você está em chroot você pode executar o nano. Se abrir você já está dentro ;)
+</p>
+
+<h2>Editar o arquivo fstab</h2>
+<p>
+O arquivo /etc/fstab é responsável por montar os dispositivos automaticamente na inicialização do seu sistema.
+Ele já está bem auto-explicativo, mude para sua realidade, descomentando... Exemplo:
+</p>
+
+<pre>
+# Exemplo Raiz
+/dev/sda1        /                ext4        defaults         1   1
+
+# Exemplo Swap
+/dev/sda4        swap             swap        defaults         0   0
+</pre>
+
+
+<h2>Editar Fuso horário</h2>
+<p>
+Defina o fuso horário a sua realidade, para isto vamos criar um link simbólico de /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime
+</p>
+
+<pre>
+<b>ln -sf</b> /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime
+</pre>
+
+<h2>Definir Hostname e Hosts</h2>
+<p>
+Se caso você precisa de um alias para rede, edite no arquivo /etc/hosts.
+Se você tiver vários computadores em rede, faça a modificação aqui.
+</p>
+
+<p>
+Exemplo para <b>/etc/hosts</b>
+</p>
+<pre>
+# For loopbacking.
+127.0.0.1               cajado.local   cajado
+192.168.0.3             notebook.local notecajado
+192.168.0.4             pcmae.local    pcmae
+</pre>
+
+<p>
+Em <b>/etc/HOSTNAME</b> será o nome da sua máquina que ficará visivel na rede.
+</p>
+
+<pre>
+cajadãoPC
+</pre>
+
+<h2>Editar /etc/lilo.conf</h2>
+<p>
+Por padrão assim como no Slackware, o Cajado vem com o Lilo com gerenciador de Boot.<br>
+O arquivo de configuração fica localizado em <b>/etc/lilo.conf</b>, edite de acordo com sua necessidade...
+</p>
+
+<p>
+Você precisa ficar atendo em algumas variáveis como:
+</p>
+
+<h2>Trocar a senha do Root</h2>
+<p>
+Estamos quase chegando ao fim, por padrão o root não vem com senha! Troque por razões claras de segurança...<br>
+O passwd pedirá que você digite seu password 3 vezes :)
+</p>
+
+<pre>
+passwd root
+</pre>
+
+
+<h2>Finalização Instalação</h2>
+<p>
+Para finalizar sua instalação, saia do ambiente chroot, desmonte a partição montada, saia da LiveCD e reboot a máquina.
+</p>
+
+<pre>
+# Sair do Chroot
+<b>exit</b>
+
+# Desmontando partições
+<b>umount</b> -Rl /mnt
+
+# Saindo do LiveCD
+<b>halt</b>
+</pre>
+
+
+</div>
+</body>
+</html>
